@@ -54,35 +54,70 @@
         <template>
             <div id="modal">
                 <md-dialog :md-active.sync="showDialog">
-                    <md-dialog-title>Profile</md-dialog-title>
-                    <md-field>
-                        <label>First name</label>
-                        <md-input v-model="user.first_name"></md-input>
-                    </md-field>
-                    <md-field>
-                        <label>Last name</label>
-                        <md-input v-model="user.last_name"></md-input>
-                    </md-field>
-                    <md-field>
-                        <label>Patronymic</label>
-                        <md-input v-model="user.patronymic"></md-input>
-                    </md-field>
-                    <md-field>
-                        <md-select v-model="roles" name="roles" id="roles" placeholder="Roles">
-                            <md-option>
-                                @{{ roles.name }}
-                            </md-option>
+                    <form novalidate class="md-layout" @submit.prevent="validateUser">
+                        <md-card class="md-layout-item md-size-50 md-small-size-100">
+                            <md-card-header>
+                                <div class="md-title">Users</div>
+                            </md-card-header>
 
-                        </md-select>
-                    </md-field>
+                            <md-card-content>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-small-size-100">
+                                        <md-field :class="getValidationClass('firstName')">
+                                            <label for="first-name">First Name</label>
+                                            <md-input name="first-name" id="first-name" autocomplete="given-name" v-model="user.first_name" :disabled="sending" />
+                                            <span class="md-error" v-if="!$v.form.firstName.required">The first name is required</span>
+                                            <span class="md-error" v-else-if="!$v.form.firstName.minlength">Invalid first name</span>
+                                        </md-field>
+                                    </div>
+                                </div>
 
-                    <md-dialog-actions>
-                        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-                        <md-button class="md-primary" @click="showDialog = false">Save</md-button>
-                    </md-dialog-actions>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-small-size-100">
+                                        <md-field :class="getValidationClass('lastName')">
+                                            <label for="last-name">Last Name</label>
+                                            <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="user.last_name" :disabled="sending" />
+                                            <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
+                                            <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
+                                        </md-field>
+                                    </div>
+                                </div>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-small-size-100">
+                                        <md-field :class="getValidationClass('patronymic')">
+                                            <label for="patronymic">Patronymic</label>
+                                            <md-input name="patronymic" id="patronymic" autocomplete="family-name" v-model="user.patronymic" :disabled="sending" />
+                                            <span class="md-error" v-if="!$v.form.lastName.required">The patronymic is required</span>
+                                            <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid patronymic</span>
+                                        </md-field>
+                                    </div>
+                                </div>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-small-size-100">
+                                        <md-field :class="getValidationClass('role')">
+                                            <label for="gender">Gender</label>
+                                            <md-select name="role" id="role" v-model="user.role" md-dense :disabled="sending">
+                                                <md-option v-for="role in roles" v-bind:value="role.id" :selected="role.id == user.role_id">
+                                                    @{{ role.name }}
+                                                </md-option>
+                                            </md-select>
+                                            <span class="md-error">The role is required</span>
+                                        </md-field>
+                                    </div>
+                                </div>
+                            </md-card-content>
+
+                            <md-progress-bar md-mode="indeterminate" v-if="sending" />
+
+                            <md-card-actions>
+                                <md-button type="submit" class="md-primary" :disabled="sending">save</md-button>
+                            </md-card-actions>
+                        </md-card>
+
+                        {{--<md-snackbar :md-active.sync="userSaved">The user @{{ lastUser }} was saved with success!</md-snackbar>--}}
+                    </form>
                 </md-dialog>
 
-                <md-button class="md-primary md-raised" @click="showDialog = true">Show Dialog</md-button>
             </div>
         </template>
     </div>
