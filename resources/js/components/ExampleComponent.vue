@@ -38,7 +38,7 @@
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
-                                <md-field :class="getValidationClass('firstName')">
+                                <md-field :class="getValidationClass('first_name')">
                                     <label for="first-name">First Name</label>
                                     <md-input name="first-name" id="first-name" autocomplete="given-name" v-model="user.first_name" :disabled="sending" />
                                     <span class="md-error" v-if="!$v.form.first_name.required">The first name is required</span>
@@ -49,7 +49,7 @@
 
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-small-size-100">
-                                <md-field :class="getValidationClass('lastName')">
+                                <md-field :class="getValidationClass('last_name')">
                                     <label for="last-name">Last Name</label>
                                     <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="user.last_name" :disabled="sending" />
                                     <span class="md-error" v-if="!$v.form.last_name.required">The last name is required</span>
