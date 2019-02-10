@@ -1867,6 +1867,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1878,6 +1886,8 @@ __webpack_require__.r(__webpack_exports__);
       name: 'formPost',
       roles: [],
       users: [],
+      deleteDialog: false,
+      userIdDeletion: null,
       showDialog: false,
       modalVisibility: false,
       res: [],
@@ -1923,6 +1933,31 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
+    del: function del(key) {
+      this.key = key;
+      this.userIdDeletion = this.users[key].id;
+      this.deleteDialog = true;
+    },
+    deleteUser: function deleteUser(id) {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.delete('/api/user/' + id).then(function (response) {
+        _this2.response = response.data;
+
+        _this2.$notify({
+          group: 'success',
+          text: 'user successfully deleted'
+        });
+
+        _this2.users.splice(_this2.key, 1);
+      }).catch(function (e) {
+        _this2.$notify({
+          group: 'error',
+          text: e
+        });
+      });
+      this.deleteDialog = false;
+    },
     selectUser: function selectUser(user, key) {
       this.form = Object.assign({}, user);
       this.key = key;
@@ -1945,7 +1980,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.role_id = null;
     },
     saveUser: function saveUser() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.put('/api/user/' + this.form.id, {
         first_name: this.form.first_name,
@@ -1953,20 +1988,20 @@ __webpack_require__.r(__webpack_exports__);
         patronymic: this.form.patronymic,
         role_id: this.form.role_id
       }).then(function (response) {
-        _this2.response = response.data.user;
-        console.log(_this2.response);
-        _this2.users[_this2.key].first_name = _this2.response.first_name;
-        _this2.users[_this2.key].last_name = _this2.response.last_name;
-        _this2.users[_this2.key].patronymic = _this2.response.patronymic;
-        _this2.users[_this2.key].role_id = _this2.response.role_id;
-        _this2.users[_this2.key].user_roles = _this2.response.user_roles;
+        _this3.response = response.data.user;
+        console.log(_this3.response);
+        _this3.users[_this3.key].first_name = _this3.response.first_name;
+        _this3.users[_this3.key].last_name = _this3.response.last_name;
+        _this3.users[_this3.key].patronymic = _this3.response.patronymic;
+        _this3.users[_this3.key].role_id = _this3.response.role_id;
+        _this3.users[_this3.key].user_roles = _this3.response.user_roles;
 
-        _this2.$notify({
+        _this3.$notify({
           group: 'success',
           text: 'successful user change'
         });
       }).catch(function (e) {
-        _this2.$notify({
+        _this3.$notify({
           group: 'error',
           text: e
         });
@@ -6256,7 +6291,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".md-dialog[data-v-299e239e] {\n  max-width: 768px;\n  background: #dbd4d4;\n  color: #fcfcfc;\n  min-width: 500px;\n}\n.md-list.md-theme-default.md-dense > li[data-v-299e239e] {\n  background: #ffecec;\n}\n.md-layout-item.md-size-50[data-v-299e239e] {\n  max-width: 100%;\n  flex: 100%;\n}", ""]);
+exports.push([module.i, ".md-dialog[data-v-299e239e] {\n  max-width: 768px;\n  background: #dbd4d4;\n  color: #fcfcfc;\n  min-width: 500px;\n}\n.md-list.md-theme-default.md-dense > li[data-v-299e239e] {\n  background: #ffecec;\n}\n.md-layout-item.md-size-50[data-v-299e239e] {\n  max-width: 100%;\n  flex: 100%;\n}\n.md-dialog.md-theme-default[data-v-299e239e] {\n  color: black;\n}", ""]);
 
 // exports
 
@@ -37578,7 +37613,24 @@ var render = function() {
                 _vm._v(" "),
                 _c("md-table-cell", [_vm._v(_vm._s(user.user_roles.name))]),
                 _vm._v(" "),
-                _c("md-table-cell", [_vm._v("Male")])
+                _c(
+                  "md-table-cell",
+                  [
+                    _c(
+                      "md-button",
+                      {
+                        staticClass: "md-accent",
+                        on: {
+                          click: function($event) {
+                            return _vm.del(key)
+                          }
+                        }
+                      },
+                      [_vm._v("Remove")]
+                    )
+                  ],
+                  1
+                )
               ],
               1
             )
@@ -37852,7 +37904,7 @@ var render = function() {
                             "md-button",
                             {
                               staticClass: "md-primary",
-                              attrs: { type: "submit", disabled: _vm.sending }
+                              attrs: { disabled: _vm.sending }
                             },
                             [_vm._v("Save")]
                           )
@@ -37867,6 +37919,30 @@ var render = function() {
               )
             ]
           ),
+          _vm._v(" "),
+          _c("md-dialog-confirm", {
+            attrs: {
+              "md-active": _vm.deleteDialog,
+              "md-title": "Deleting user",
+              "md-content": "Are you sure you want to delete this user?",
+              "md-confirm-text": "Yes",
+              "md-cancel-text": "No"
+            },
+            on: {
+              "update:mdActive": function($event) {
+                _vm.deleteDialog = $event
+              },
+              "update:md-active": function($event) {
+                _vm.deleteDialog = $event
+              },
+              "md-cancel": function($event) {
+                _vm.deleteDialog = false
+              },
+              "md-confirm": function($event) {
+                return _vm.deleteUser(_vm.userIdDeletion)
+              }
+            }
+          }),
           _vm._v(" "),
           _c("notifications", {
             attrs: { group: "error", position: "top right" }

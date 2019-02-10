@@ -23,7 +23,7 @@
                     </div>
                 </md-table-cell>
                 <md-table-cell>{{ user.user_roles.name}}</md-table-cell>
-                <md-table-cell>Male</md-table-cell>
+                <md-table-cell><md-button class="md-accent" @click="del(key)">Remove</md-button></md-table-cell>
             </md-table-row>
         </md-table>
         <div id="modal">
@@ -84,12 +84,20 @@
 
                     <md-card-actions>
                         <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-                        <md-button type="submit" class="md-primary" :disabled="sending">Save</md-button>
+                        <md-button class="md-primary" :disabled="sending">Save</md-button>
                     </md-card-actions>
                 </md-card>
 
             </form>
         </md-dialog>
+            <md-dialog-confirm
+                    :md-active.sync="deleteDialog"
+                    md-title="Deleting user"
+                    md-content="Are you sure you want to delete this user?"
+                    md-confirm-text="Yes"
+                    md-cancel-text="No"
+                    @md-cancel="deleteDialog = false"
+                    @md-confirm="deleteUser(userIdDeletion)" />
             <notifications group="error" position="top right"/>
             <notifications group="success" position="top right"/>
     </div>
@@ -109,6 +117,8 @@
                 name: 'formPost',
                 roles: [],
                 users: [],
+                deleteDialog: false,
+                userIdDeletion: null,
                 showDialog: false,
                 modalVisibility: false,
                 res : [],
@@ -152,6 +162,23 @@
                 .then(response => (this.roles = response.data));
         },
         methods: {
+            del(key){
+                this.key = key;
+                this.userIdDeletion = this.users[key].id;
+                this.deleteDialog = true;
+            },
+            deleteUser(id){
+                axios.delete('/api/user/' + id)
+                    .then(response => {
+                        this.response = response.data;
+                        this.$notify({ group: 'success', text: 'user successfully deleted'});
+                        this.users.splice(this.key, 1);
+                    })
+                    .catch(e => {
+                        this.$notify({ group: 'error', text: e });
+                    });
+                this.deleteDialog = false;
+            },
             selectUser(user, key) {
                 this.form =  Object.assign({}, user);
                 this.key = key;
@@ -220,5 +247,9 @@
     .md-layout-item.md-size-50 {
         max-width: 100%;
         flex: 100%;
+    }
+
+    .md-dialog.md-theme-default {
+        color: black;
     }
 </style>
