@@ -12,7 +12,11 @@ window.Vue = require('vue');
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 
-Vue.use(VueMaterial)
+Vue.use(VueMaterial);
+
+import Notifications from 'vue-notification'
+Vue.use(Notifications);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

@@ -45,7 +45,7 @@ class UserController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'patronymic' => 'required',
-            'role' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id'
         ]);
 
         if ($v->fails()) {
@@ -56,9 +56,10 @@ class UserController extends Controller
         $user->last_name = $request->last_name;
         $user->first_name = $request->first_name;
         $user->patronymic = $request->patronymic;
-        $user->role_id = $request->role;
+        $user->role_id = $request->role_id;
         $user->save();
 
+        $user = Users::find($id);
         return response()->json(['status'=> true,'user'=>$user]);
     }
 
