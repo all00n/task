@@ -84,7 +84,7 @@
 
                     <md-card-actions>
                         <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-                        <md-button class="md-primary" :disabled="sending">Save</md-button>
+                        <md-button class="md-primary" type="submit" :disabled="sending">Save</md-button>
                     </md-card-actions>
                 </md-card>
 
@@ -208,7 +208,6 @@
                     role_id: this.form.role_id,
                 }).then(response => {
                     this.response = response.data.user;
-                    console.log(this.response);
                     this.users[this.key].first_name = this.response.first_name;
                     this.users[this.key].last_name = this.response.last_name;
                     this.users[this.key].patronymic = this.response.patronymic;
